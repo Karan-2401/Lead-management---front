@@ -19,7 +19,7 @@ import {
   Trash2,
   Eye,
 } from "lucide-react";
-import { addLead, getAllLeads } from "../api/Lead";
+import { addLead, getAllLeads, updateLead,deleteLead } from "../api/Lead";
 import { getUser } from "../api/User";
 
 export default function AdminLead() {
@@ -29,6 +29,7 @@ export default function AdminLead() {
   const [selectedLead, setSelectedLead] = useState(null);
   const [newLeadform, setNewLeadForm] = useState(false);
   const [employees, setEmployees] = useState("");
+  const [updateLead,serUpdateLead] = useState(false)
   const [sortConfig, setSortConfig] = useState({
     key: "date",
     direction: "desc",
@@ -43,7 +44,7 @@ export default function AdminLead() {
     assignTo: "",
     leadValue: "",
   });
-  const [leads, setLeads] = useState("");
+  const [leads, setLeads] = useState([]);
 
   const handleChange = (e) => {
     const { name, value } = e.target;
@@ -55,13 +56,22 @@ export default function AdminLead() {
 
   const handleSubmit = () => {
     addLead(formData).then((res) => console.log(res));
-    console.log(formData);
     setNewLeadForm(false); // Close the form after submission
+  };
+
+   const updateHandleSubmit = () => {
+    updateLead(formData).then((res) => console.log(res));
+    setNewLeadForm(false); // Close the form after submission
+  };
+
+  const deletelead = (x) => {
+    deleteLead(x).then((res) => console.log(res));
+   console.log(x)
   };
 
   useEffect(() => {
     getUser().then((res) => setEmployees(res.data.userData));
-  }, []);
+  }, [updateLead]);
   // Filter states
   const [filters, setFilters] = useState({
     source: "all",
@@ -435,12 +445,12 @@ export default function AdminLead() {
               </tr>
             </thead>
             <tbody className="divide-y divide-neutral-800">
-              {leads &&
+              {
                 leads.map((lead) => {
                   const SourceIcon = getSourceIcon(lead.source);
                   return (
                     <tr
-                      key={lead.id}
+                      key={lead._id}
                       className="transition-colors hover:bg-neutral-800/50"
                     >
                       <td className="p-4">
@@ -492,7 +502,7 @@ export default function AdminLead() {
                         </span>
                       </td>
                       <td className="p-4 text-sm text-neutral-300">
-                        {lead.employee ? lead.employee.name : 'Unassign'}
+                        {lead.employee ? lead.employee.name : "Unassign"}
                       </td>
                       <td className="p-4">
                         <div className="flex items-center gap-2 text-sm text-neutral-300">
@@ -506,21 +516,29 @@ export default function AdminLead() {
                       <td className="p-4">
                         <div className="flex items-center gap-2">
                           <button
-                            onClick={() => openLeadDetails(lead)}
-                            className="rounded p-1 text-neutral-400 transition-colors hover:bg-neutral-700 hover:text-white"
-                            title="View Details"
-                          >
-                            <Eye className="h-4 w-4" />
-                          </button>
-                          <button
                             className="rounded p-1 text-neutral-400 transition-colors hover:bg-neutral-700 hover:text-white"
                             title="Edit"
+                            onClick={() => {
+                              setNewLeadForm(true);
+                              setFormData({
+                                fullName:lead.name,
+                                company:lead.company,
+                                email: lead.email,
+                                phone: lead.phone,
+                                source: lead.source,
+                                status: lead.status,
+                                assignTo: lead.assigned_to,
+                                leadValue: lead.value,
+                                update:true
+                              });
+                            }}
                           >
                             <Edit className="h-4 w-4" />
                           </button>
                           <button
                             className="rounded p-1 text-neutral-400 transition-colors hover:bg-neutral-700 hover:text-red-400"
                             title="Delete"
+                            onClick={()=>deletelead(lead.phone)}
                           >
                             <Trash2 className="h-4 w-4" />
                           </button>
@@ -571,7 +589,8 @@ export default function AdminLead() {
             <div className="flex items-center justify-between border-b border-neutral-800 p-6">
               <h2 className="text-xl font-bold text-white">Add Lead</h2>
               <button
-                onClick={() => setNewLeadForm(false)}
+                onClick={() => {setNewLeadForm(false)
+                   setFormData({})}}
                 className="rounded-lg p-2 text-neutral-400 transition-colors hover:bg-neutral-800 hover:text-white"
               >
                 <X className="h-5 w-5" />
@@ -710,17 +729,25 @@ export default function AdminLead() {
             {/* Modal Footer */}
             <div className="flex items-center justify-end gap-3 border-t border-neutral-800 p-6">
               <button
-                onClick={() => setNewLeadForm(false)}
+                onClick={() => {setNewLeadForm(false)
+                  setFormData({})
+                }}
                 className="rounded-lg border border-neutral-700 bg-neutral-800 px-4 py-2 text-sm font-medium text-white transition-colors hover:bg-neutral-700"
               >
                 Cancel
               </button>
-              <button
+              {formData.update ? ( <button
+                onClick={updateHandleSubmit}
+                className="rounded-lg bg-blue-500 px-4 py-2 text-sm font-medium text-white transition-colors hover:bg-blue-600"
+              >
+                Update
+              </button>): ( <button
                 onClick={handleSubmit}
                 className="rounded-lg bg-blue-500 px-4 py-2 text-sm font-medium text-white transition-colors hover:bg-blue-600"
               >
                 Add
-              </button>
+              </button>)}
+             
             </div>
           </div>
         </div>
