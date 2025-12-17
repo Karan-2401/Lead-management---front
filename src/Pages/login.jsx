@@ -23,6 +23,7 @@ const Login = () => {
         .then((res) => {
           if (res.data.msg == "login successfull") {
             localStorage.setItem("user", JSON.stringify(res.data.data));
+            window.location.reload();
             navigate("/dashboard");
           }
         })

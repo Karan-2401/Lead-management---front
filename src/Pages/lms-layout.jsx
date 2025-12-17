@@ -8,7 +8,9 @@ export default function LmsLayout() {
   const location = useLocation()
   const navigate = useNavigate()
   const Data = useContext(DataContext)
-  
+  function removeFromLocalStorage(key) {
+  localStorage.removeItem(key);
+}
   const role = Data ? Data.Data.profile.role : ''
       const navItems = [
     { name: 'Dashboard', path: '/dashboard', icon: LayoutDashboard, for:['Admin','Employee']},
@@ -82,7 +84,10 @@ export default function LmsLayout() {
             </button>
 
             {/* Logout Icon */}
-            <button className="rounded-lg p-2 text-neutral-400 transition-colors hover:bg-neutral-800 hover:text-red-400">
+            <button className="rounded-lg p-2 text-neutral-400 transition-colors hover:bg-neutral-800 hover:text-red-400" onClick={()=>{
+              removeFromLocalStorage('user')
+              navigate('/')
+            }}>
               <LogOut className="h-5 w-5" />
             </button>
           </div>
