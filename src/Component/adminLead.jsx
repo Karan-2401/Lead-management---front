@@ -19,7 +19,7 @@ import {
   Trash2,
   Eye,
 } from "lucide-react";
-import { addLead, getAllLeads, updateLead,deleteLead } from "../api/Lead";
+import { addLead, getAllLeads, updatelead,deleteLead } from "../api/Lead";
 import { getUser } from "../api/User";
 
 export default function AdminLead() {
@@ -60,7 +60,7 @@ export default function AdminLead() {
   };
 
    const updateHandleSubmit = () => {
-    updateLead(formData).then((res) => console.log(res));
+    updatelead(formData).then((res) => console.log(res));
     setNewLeadForm(false); // Close the form after submission
   };
 

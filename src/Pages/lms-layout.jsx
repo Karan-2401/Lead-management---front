@@ -95,6 +95,7 @@ export default function LmsLayout() {
 
         {/* Page Content */}
         <main className="flex-1 overflow-y-auto bg-neutral-950 p-6">
+           {/* {navigate.state === "loading" && <TopLoader />} */}
           <Outlet />
         </main>
       </div>

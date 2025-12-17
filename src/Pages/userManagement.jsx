@@ -367,7 +367,7 @@ export default function UserManagementPage() {
                     </span>
                   </td>
                   <td className="p-4 text-sm font-medium text-white">
-                    {user.leads ? "232" : "0"}
+                    {user.leads ? user.leads.length : "0"}
                   </td>
                   <td className="p-4">
                     <div className="flex items-center gap-2 text-sm text-neutral-300">
