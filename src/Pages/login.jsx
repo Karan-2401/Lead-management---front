@@ -2,7 +2,7 @@ import React, { useEffect } from "react";
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { signIn } from "../api/User";
-
+import logo from '../../public/logo.png'
 const Login = () => {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
@@ -35,12 +35,10 @@ const Login = () => {
   }, [runApi]);
 
   return (
-    <div className="min-h-screen flex items-center justify-center bg-gray-100 p-4">
+    <div className="min-h-screen flex items-center justify-center bg-[#0a0a0a] p-4">
       <div className="w-full max-w-md bg-white shadow-xl rounded-xl p-8">
         {/* Title */}
-        <h2 className="text-3xl font-bold text-center text-gray-800 mb-8">
-          LeadTracker
-        </h2>
+        <img src={logo} alt="" className="w-full" style={{height:'200px'}} />
 
         {/* Form */}
         <form onSubmit={handleSubmit} className="space-y-5">
