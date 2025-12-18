@@ -1,5 +1,5 @@
-import React from "react"
-import { useState } from "react"
+import React, { useEffect } from "react";
+import { useState } from "react";
 import {
   Bell,
   Users,
@@ -14,66 +14,63 @@ import {
   Eye,
   Edit,
   AlertCircle,
-} from "lucide-react"
+} from "lucide-react";
+import { getAllLeadEmp, updateleademp } from "../api/Lead";
+import { DataContext } from "../dataContext";
+import { useContext } from "react";
 
 export default function EmployeeDashboard() {
-  const [selectedLead, setSelectedLead] = useState(null)
-  const [showLeadDetails, setShowLeadDetails] = useState(false)
-
+  const [selectedLead, setSelectedLead] = useState(null);
+  const [showLeadDetails, setShowLeadDetails] = useState(false);
+  const userData = useContext(DataContext).Data;
+  const [leadDetails, setLeadDetails] = useState({ assignL: "", contact: "" });
+  const [assignedLeads, setAssignedLeads] = useState([]);
+  const [updateLead, setUpdateLead] = useState(false)
   // Sample data - replace with your actual API data for the logged-in employee
-  const employeeStats = [
-    { label: "Assigned Leads", value: "24", icon: Users, color: "bg-blue-500" },
-    { label: "Contacted Today", value: "8", icon: Phone, color: "bg-purple-500" },
-    { label: "Converted", value: "12", icon: CheckCircle, color: "bg-emerald-500" },
-    { label: "Conversion Rate", value: "28.5%", icon: Target, color: "bg-amber-500" },
-  ]
+  const update = () => {
+    updateleademp(selectedLead).then((res)=>{if(res.data.msg == 'lead is updated'){
+      setUpdateLead(!updateLead)
+    }});
+  };
+  useEffect(() => {
+    getAllLeadEmp(userData.phone).then((res) => {
+      setAssignedLeads(res.data.data);
+      setLeadDetails({ ...leadDetails, assignL: res.data.data.length });
+    });
+  }, [updateLead]);
 
-  const assignedLeads = [
+  const convertedPeople = assignedLeads.filter((x) => x.status == "New");
+  const percantageOfConvertedPeople = Math.trunc(
+    (convertedPeople.length / assignedLeads.length) * 100
+  );
+  const employeeStats = [
     {
-      id: 1,
-      name: "Sarah Johnson",
-      email: "sarah.j@example.com",
-      phone: "+1 (555) 123-4567",
-      company: "Tech Corp",
-      source: "Website",
-      status: "New",
-      assignedDate: "2024-01-15",
-      priority: "high",
+      label: "Assigned Leads",
+      value: leadDetails.assignL ? leadDetails.assignL : "0",
+      icon: Users,
+      color: "bg-blue-500",
     },
     {
-      id: 2,
-      name: "Michael Chen",
-      email: "michael.c@startup.io",
-      phone: "+1 (555) 234-5678",
-      company: "StartupIO",
-      source: "Meta",
-      status: "Contacted",
-      assignedDate: "2024-01-14",
-      priority: "medium",
+      label: "Contacted Today",
+      value: "8",
+      icon: Phone,
+      color: "bg-purple-500",
     },
     {
-      id: 3,
-      name: "Emma Williams",
-      email: "emma.w@business.com",
-      phone: "+1 (555) 345-6789",
-      company: "Business Ltd",
-      source: "Google",
-      status: "Follow-up",
-      assignedDate: "2024-01-13",
-      priority: "high",
+      label: "Converted",
+      value: convertedPeople ? convertedPeople.length : "0",
+      icon: CheckCircle,
+      color: "bg-emerald-500",
     },
     {
-      id: 4,
-      name: "David Brown",
-      email: "david.b@company.net",
-      phone: "+1 (555) 456-7890",
-      company: "Company Net",
-      source: "Website",
-      status: "Qualified",
-      assignedDate: "2024-01-12",
-      priority: "low",
+      label: "Conversion Rate",
+      value: percantageOfConvertedPeople
+        ? `${percantageOfConvertedPeople} %`
+        : "0 %",
+      icon: Target,
+      color: "bg-amber-500",
     },
-  ]
+  ];
 
   const alerts = [
     {
@@ -97,7 +94,7 @@ export default function EmployeeDashboard() {
       time: "4 hours ago",
       priority: "medium",
     },
-  ]
+  ];
 
   const weeklyPerformance = [
     { day: "Mon", worked: 5, converted: 1 },
@@ -107,89 +104,98 @@ export default function EmployeeDashboard() {
     { day: "Fri", worked: 9, converted: 2 },
     { day: "Sat", worked: 4, converted: 1 },
     { day: "Sun", worked: 3, converted: 1 },
-  ]
+  ];
 
-  const maxWorked = Math.max(...weeklyPerformance.map((d) => d.worked))
+  const maxWorked = Math.max(...weeklyPerformance.map((d) => d.worked));
 
   const getSourceIcon = (source) => {
     switch (source) {
       case "Website":
-        return Globe
+        return Globe;
       case "Meta":
-        return Facebook
+        return Facebook;
       case "Google":
-        return SearchIcon
+        return SearchIcon;
       default:
-        return Globe
+        return Globe;
     }
-  }
+  };
 
   const getStatusColor = (status) => {
     switch (status) {
       case "New":
-        return "bg-blue-500/10 text-blue-500"
+        return "bg-blue-500/10 text-blue-500";
       case "Contacted":
-        return "bg-purple-500/10 text-purple-500"
+        return "bg-purple-500/10 text-purple-500";
       case "Follow-up":
-        return "bg-amber-500/10 text-amber-500"
+        return "bg-amber-500/10 text-amber-500";
       case "Qualified":
-        return "bg-emerald-500/10 text-emerald-500"
+        return "bg-emerald-500/10 text-emerald-500";
       default:
-        return "bg-neutral-500/10 text-neutral-500"
+        return "bg-neutral-500/10 text-neutral-500";
     }
-  }
+  };
 
   const getPriorityColor = (priority) => {
     switch (priority) {
       case "high":
-        return "border-red-500"
+        return "border-red-500";
       case "medium":
-        return "border-amber-500"
+        return "border-amber-500";
       case "low":
-        return "border-emerald-500"
+        return "border-emerald-500";
       default:
-        return "border-neutral-700"
+        return "border-neutral-700";
     }
-  }
+  };
 
   const getAlertIcon = (type) => {
     switch (type) {
       case "new":
-        return Bell
+        return Bell;
       case "reminder":
-        return Clock
+        return Clock;
       case "info":
-        return AlertCircle
+        return AlertCircle;
       default:
-        return Bell
+        return Bell;
     }
-  }
+  };
 
   return (
     <div className="h-full">
       {/* Page Header */}
       <div className="mb-6">
         <h1 className="text-2xl font-bold text-white">My Dashboard</h1>
-        <p className="mt-1 text-sm text-neutral-400">Track your assigned leads and performance</p>
+        <p className="mt-1 text-sm text-neutral-400">
+          Track your assigned leads and performance
+        </p>
       </div>
 
       {/* Stats Grid */}
       <div className="mb-6 grid gap-4 md:grid-cols-2 lg:grid-cols-4">
         {employeeStats.map((stat, index) => {
-          const Icon = stat.icon
+          const Icon = stat.icon;
           return (
-            <div key={index} className="rounded-lg border border-neutral-800 bg-neutral-900 p-5">
+            <div
+              key={index}
+              className="rounded-lg border border-neutral-800 bg-neutral-900 p-5"
+            >
               <div className="flex items-center justify-between">
                 <div className={`rounded-lg ${stat.color}/10 p-2.5`}>
-                  <Icon className={`h-5 w-5 ${stat.color.replace("bg-", "text-")}`} />
+                  <Icon
+                    className={`h-5 w-5 ${stat.color.replace("bg-", "text-")}`}
+                  />
                 </div>
               </div>
               <div className="mt-4">
                 <p className="text-sm text-neutral-400">{stat.label}</p>
-                <p className="mt-1 text-2xl font-bold text-white">{stat.value}</p>
+                <p className="mt-1 text-2xl font-bold text-white">
+                  {stat.value}
+                </p>
               </div>
             </div>
-          )
+          );
         })}
       </div>
 
@@ -200,38 +206,48 @@ export default function EmployeeDashboard() {
           <div className="rounded-lg border border-neutral-800 bg-neutral-900">
             {/* Header */}
             <div className="border-b border-neutral-800 p-4">
-              <h2 className="text-lg font-semibold text-white">My Assigned Leads</h2>
-              <p className="mt-1 text-sm text-neutral-400">Leads currently assigned to you</p>
+              <h2 className="text-lg font-semibold text-white">
+                My Assigned Leads
+              </h2>
+              <p className="mt-1 text-sm text-neutral-400">
+                Leads currently assigned to you
+              </p>
             </div>
 
             {/* Leads List */}
             <div className="divide-y divide-neutral-800">
               {assignedLeads.map((lead) => {
-                const SourceIcon = getSourceIcon(lead.source)
+                const SourceIcon = getSourceIcon(lead.source);
                 return (
                   <div
                     key={lead.id}
-                    className={`border-l-4 p-4 transition-colors hover:bg-neutral-800/50 ${getPriorityColor(lead.priority)}`}
+                    className={`border-l-4 p-4 transition-colors hover:bg-neutral-800/50 ${getPriorityColor(
+                      lead.priority
+                    )}`}
                   >
                     <div className="flex items-start justify-between">
                       <div className="flex-1">
                         <div className="flex items-center gap-3">
                           <button
                             onClick={() => {
-                              setSelectedLead(lead)
-                              setShowLeadDetails(true)
+                              setSelectedLead(lead);
+                              setShowLeadDetails(true);
                             }}
                             className="text-base font-semibold text-white hover:text-blue-400"
                           >
                             {lead.name}
                           </button>
                           <span
-                            className={`inline-flex rounded-full px-2.5 py-0.5 text-xs font-medium ${getStatusColor(lead.status)}`}
+                            className={`inline-flex rounded-full px-2.5 py-0.5 text-xs font-medium ${getStatusColor(
+                              lead.status
+                            )}`}
                           >
                             {lead.status}
                           </span>
                         </div>
-                        <p className="mt-1 text-sm text-neutral-400">{lead.company}</p>
+                        <p className="mt-1 text-sm text-neutral-400">
+                          {lead.company}
+                        </p>
 
                         <div className="mt-3 flex flex-wrap items-center gap-4 text-sm">
                           <div className="flex items-center gap-1.5 text-neutral-300">
@@ -250,7 +266,7 @@ export default function EmployeeDashboard() {
                       </div>
 
                       <div className="ml-4 flex items-center gap-2">
-                        <button
+                        {/* <button
                           onClick={() => {
                             setSelectedLead(lead)
                             setShowLeadDetails(true)
@@ -259,17 +275,21 @@ export default function EmployeeDashboard() {
                           title="View Details"
                         >
                           <Eye className="h-4 w-4" />
-                        </button>
+                        </button> */}
                         <button
                           className="rounded-lg p-2 text-neutral-400 transition-colors hover:bg-neutral-800 hover:text-white"
                           title="Edit"
+                          onClick={() => {
+                            setSelectedLead(lead);
+                            setShowLeadDetails(true);
+                          }}
                         >
                           <Edit className="h-4 w-4" />
                         </button>
                       </div>
                     </div>
                   </div>
-                )
+                );
               })}
             </div>
           </div>
@@ -277,19 +297,28 @@ export default function EmployeeDashboard() {
           {/* Performance Chart */}
           <div className="mt-6 rounded-lg border border-neutral-800 bg-neutral-900 p-6">
             <div className="mb-6">
-              <h3 className="text-lg font-semibold text-white">Weekly Performance</h3>
-              <p className="mt-1 text-sm text-neutral-400">Leads worked on vs converted this week</p>
+              <h3 className="text-lg font-semibold text-white">
+                Weekly Performance
+              </h3>
+              <p className="mt-1 text-sm text-neutral-400">
+                Leads worked on vs converted this week
+              </p>
             </div>
 
             <div className="flex items-end justify-between gap-3">
               {weeklyPerformance.map((day, index) => (
-                <div key={index} className="flex flex-1 flex-col items-center gap-3">
+                <div
+                  key={index}
+                  className="flex flex-1 flex-col items-center gap-3"
+                >
                   <div className="relative w-full space-y-1">
                     {/* Worked Bar */}
                     <div className="flex flex-col items-center">
                       <div
                         className="w-full rounded-t-lg bg-blue-500 transition-all hover:bg-blue-400"
-                        style={{ height: `${(day.worked / maxWorked) * 100}px` }}
+                        style={{
+                          height: `${(day.worked / maxWorked) * 100}px`,
+                        }}
                         title={`${day.worked} worked`}
                       />
                     </div>
@@ -297,12 +326,16 @@ export default function EmployeeDashboard() {
                     <div className="flex flex-col items-center">
                       <div
                         className="w-full rounded-t-lg bg-emerald-500 transition-all hover:bg-emerald-400"
-                        style={{ height: `${(day.converted / maxWorked) * 100}px` }}
+                        style={{
+                          height: `${(day.converted / maxWorked) * 100}px`,
+                        }}
                         title={`${day.converted} converted`}
                       />
                     </div>
                   </div>
-                  <span className="text-xs font-medium text-neutral-400">{day.day}</span>
+                  <span className="text-xs font-medium text-neutral-400">
+                    {day.day}
+                  </span>
                 </div>
               ))}
             </div>
@@ -331,30 +364,47 @@ export default function EmployeeDashboard() {
                   {alerts.filter((a) => a.priority === "high").length}
                 </span>
               </div>
-              <p className="mt-1 text-sm text-neutral-400">Recent notifications and reminders</p>
+              <p className="mt-1 text-sm text-neutral-400">
+                Recent notifications and reminders
+              </p>
             </div>
 
             {/* Alerts List */}
             <div className="divide-y divide-neutral-800">
               {alerts.map((alert) => {
-                const Icon = getAlertIcon(alert.type)
+                const Icon = getAlertIcon(alert.type);
                 return (
-                  <div key={alert.id} className="p-4 transition-colors hover:bg-neutral-800/50">
+                  <div
+                    key={alert.id}
+                    className="p-4 transition-colors hover:bg-neutral-800/50"
+                  >
                     <div className="flex gap-3">
                       <div
                         className={`flex-shrink-0 rounded-lg p-2 ${
-                          alert.priority === "high" ? "bg-red-500/10" : "bg-blue-500/10"
+                          alert.priority === "high"
+                            ? "bg-red-500/10"
+                            : "bg-blue-500/10"
                         }`}
                       >
-                        <Icon className={`h-4 w-4 ${alert.priority === "high" ? "text-red-500" : "text-blue-500"}`} />
+                        <Icon
+                          className={`h-4 w-4 ${
+                            alert.priority === "high"
+                              ? "text-red-500"
+                              : "text-blue-500"
+                          }`}
+                        />
                       </div>
                       <div className="flex-1">
-                        <p className="text-sm leading-relaxed text-neutral-200">{alert.message}</p>
-                        <p className="mt-1 text-xs text-neutral-500">{alert.time}</p>
+                        <p className="text-sm leading-relaxed text-neutral-200">
+                          {alert.message}
+                        </p>
+                        <p className="mt-1 text-xs text-neutral-500">
+                          {alert.time}
+                        </p>
                       </div>
                     </div>
                   </div>
-                )
+                );
               })}
             </div>
 
@@ -368,7 +418,9 @@ export default function EmployeeDashboard() {
 
           {/* Quick Actions */}
           <div className="mt-6 rounded-lg border border-neutral-800 bg-neutral-900 p-4">
-            <h3 className="mb-4 text-sm font-semibold text-white">Quick Actions</h3>
+            <h3 className="mb-4 text-sm font-semibold text-white">
+              Quick Actions
+            </h3>
             <div className="space-y-2">
               <button className="flex w-full items-center gap-3 rounded-lg border border-neutral-700 bg-neutral-800 p-3 text-sm font-medium text-white transition-colors hover:bg-neutral-700">
                 <Phone className="h-4 w-4 text-blue-500" />
@@ -404,41 +456,82 @@ export default function EmployeeDashboard() {
             <div className="p-6">
               <div className="grid gap-6 md:grid-cols-2">
                 <div>
-                  <label className="mb-2 block text-xs font-medium text-neutral-400">Full Name</label>
+                  <label className="mb-2 block text-xs font-medium text-neutral-400">
+                    Full Name
+                  </label>
                   <input
                     type="text"
-                    defaultValue={selectedLead.name}
+                    value={selectedLead.name}
+                    onChange={(e) =>
+                      setSelectedLead({ ...selectedLead, name: e.target.value })
+                    }
                     className="w-full rounded-lg border border-neutral-700 bg-neutral-800 px-3 py-2 text-sm text-white focus:border-blue-500 focus:outline-none"
                   />
                 </div>
+
                 <div>
-                  <label className="mb-2 block text-xs font-medium text-neutral-400">Company</label>
+                  <label className="mb-2 block text-xs font-medium text-neutral-400">
+                    Company
+                  </label>
                   <input
                     type="text"
-                    defaultValue={selectedLead.company}
+                    value={selectedLead.company}
+                    onChange={(e) =>
+                      setSelectedLead({
+                        ...selectedLead,
+                        company: e.target.value,
+                      })
+                    }
                     className="w-full rounded-lg border border-neutral-700 bg-neutral-800 px-3 py-2 text-sm text-white focus:border-blue-500 focus:outline-none"
                   />
                 </div>
+
                 <div>
-                  <label className="mb-2 block text-xs font-medium text-neutral-400">Email</label>
+                  <label className="mb-2 block text-xs font-medium text-neutral-400">
+                    Email
+                  </label>
                   <input
                     type="email"
-                    defaultValue={selectedLead.email}
+                    value={selectedLead.email}
+                    onChange={(e) =>
+                      setSelectedLead({
+                        ...selectedLead,
+                        email: e.target.value,
+                      })
+                    }
                     className="w-full rounded-lg border border-neutral-700 bg-neutral-800 px-3 py-2 text-sm text-white focus:border-blue-500 focus:outline-none"
                   />
                 </div>
+
                 <div>
-                  <label className="mb-2 block text-xs font-medium text-neutral-400">Phone</label>
+                  <label className="mb-2 block text-xs font-medium text-neutral-400">
+                    Phone
+                  </label>
                   <input
                     type="tel"
-                    defaultValue={selectedLead.phone}
+                    value={selectedLead.phone}
+                    onChange={(e) =>
+                      setSelectedLead({
+                        ...selectedLead,
+                        phone: e.target.value,
+                      })
+                    }
                     className="w-full rounded-lg border border-neutral-700 bg-neutral-800 px-3 py-2 text-sm text-white focus:border-blue-500 focus:outline-none"
                   />
                 </div>
+
                 <div>
-                  <label className="mb-2 block text-xs font-medium text-neutral-400">Status</label>
+                  <label className="mb-2 block text-xs font-medium text-neutral-400">
+                    Status
+                  </label>
                   <select
-                    defaultValue={selectedLead.status}
+                    value={selectedLead.status}
+                    onChange={(e) =>
+                      setSelectedLead({
+                        ...selectedLead,
+                        status: e.target.value,
+                      })
+                    }
                     className="w-full rounded-lg border border-neutral-700 bg-neutral-800 px-3 py-2 text-sm text-white focus:border-blue-500 focus:outline-none"
                   >
                     <option>New</option>
@@ -448,21 +541,33 @@ export default function EmployeeDashboard() {
                     <option>Proposal Sent</option>
                   </select>
                 </div>
+
                 <div>
-                  <label className="mb-2 block text-xs font-medium text-neutral-400">Source</label>
+                  <label className="mb-2 block text-xs font-medium text-neutral-400">
+                    Source
+                  </label>
                   <input
                     type="text"
-                    defaultValue={selectedLead.source}
+                    value={selectedLead.source}
                     disabled
                     className="w-full rounded-lg border border-neutral-700 bg-neutral-800 px-3 py-2 text-sm text-neutral-500"
                   />
                 </div>
-                <div className="md:col-span-2">
-                  <label className="mb-2 block text-xs font-medium text-neutral-400">Notes</label>
-                  <textarea
-                    rows={4}
-                    placeholder="Add your notes about this lead..."
-                    className="w-full rounded-lg border border-neutral-700 bg-neutral-800 px-3 py-2 text-sm text-white placeholder:text-neutral-500 focus:border-blue-500 focus:outline-none"
+
+                <div>
+                  <label className="mb-2 block text-xs font-medium text-neutral-400">
+                    Value
+                  </label>
+                  <input
+                    type="text"
+                    value={selectedLead.value}
+                    onChange={(e) =>
+                      setSelectedLead({
+                        ...selectedLead,
+                        value: e.target.value,
+                      })
+                    }
+                    className="w-full rounded-lg border border-neutral-700 bg-neutral-800 px-3 py-2 text-sm text-white focus:border-blue-500 focus:outline-none"
                   />
                 </div>
               </div>
@@ -475,7 +580,15 @@ export default function EmployeeDashboard() {
               >
                 Cancel
               </button>
-              <button className="rounded-lg bg-blue-500 px-4 py-2 text-sm font-medium text-white transition-colors hover:bg-blue-600">
+
+              <button
+                onClick={() => {
+                  // selectedLead now has updated values
+                  setShowLeadDetails(false);
+                  update();
+                }}
+                className="rounded-lg bg-blue-500 px-4 py-2 text-sm font-medium text-white transition-colors hover:bg-blue-600"
+              >
                 Save Changes
               </button>
             </div>
@@ -483,5 +596,5 @@ export default function EmployeeDashboard() {
         </div>
       )}
     </div>
-  )
+  );
 }

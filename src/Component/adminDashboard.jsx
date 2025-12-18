@@ -1,10 +1,13 @@
-import React from 'react'
+import React, { useEffect, useState } from 'react'
 import { TrendingUp, TrendingDown, Users, Globe, Facebook, Search } from 'lucide-react'
+import { getAllLeads } from '../api/Lead'
 
 export default function AdminDashboard() {
   // Sample data - replace with your actual data
-  const totalLeads = 1247
-  const todayLeads = 34
+  // const totalLeads = 1247
+  const [totalLeads,setTotalLeads] = useState('')
+  // const todayLeads = 34
+  const [todayLeads,setTodayLeads] = useState([])
   const leadGrowth = 12.5
   
   const leadsBySource = [
@@ -12,7 +15,12 @@ export default function AdminDashboard() {
     { source: 'Meta', count: 412, percentage: 33, color: 'bg-purple-500', icon: Facebook },
     { source: 'Google', count: 312, percentage: 25, color: 'bg-emerald-500', icon: Search },
   ]
-
+  useEffect(()=>{
+    getAllLeads().then((res)=>{
+      const data = res.data.data;
+      setTotalLeads(data)
+    })
+  },[])
   // Sample bar chart data
   const dailyLeads = [
     { day: 'Mon', count: 28 },
@@ -42,7 +50,7 @@ export default function AdminDashboard() {
             <div className="flex items-center justify-between">
               <div>
                 <p className="text-sm font-medium text-neutral-400">Total Leads</p>
-                <p className="mt-2 text-3xl font-bold text-white">{totalLeads.toLocaleString()}</p>
+                <p className="mt-2 text-3xl font-bold text-white">{totalLeads.length.toLocaleString()}</p>
               </div>
               <div className="rounded-full bg-blue-500/10 p-3">
                 <Users className="h-6 w-6 text-blue-500" />
