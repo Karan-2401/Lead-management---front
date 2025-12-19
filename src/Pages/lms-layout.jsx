@@ -26,7 +26,7 @@ export default function LmsLayout() {
       const navItems = [
     { name: 'Dashboard', path: '/dashboard', icon: LayoutDashboard, for:['Admin','Employee']},
     { name: 'Leads', path: '/dashboard/lead', icon: Users, for:['Admin','Employee'] },
-    { name: 'Analytics', path: '/dashboard/analytics', icon: BarChart3, for:['Admin'] },
+    // { name: 'Analytics', path: '/dashboard/analytics', icon: BarChart3, for:['Admin'] },
     { name: 'Setting', path: '/dashboard/setting', icon: Settings, for:['Admin','Employee'] },
     { name: 'User Management', path: '/dashboard/usermanagement', icon: UserCog, for:['Admin'] },
   ]

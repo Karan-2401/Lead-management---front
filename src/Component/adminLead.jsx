@@ -22,6 +22,9 @@ import {
 } from "lucide-react";
 import { addLead, getAllLeads, updatelead,deleteLead } from "../api/Lead";
 import { getUser } from "../api/User";
+import { jsPDF } from 'jspdf';
+import 'jspdf-autotable'; 
+import { downloadPDF } from "../function/pdfCreate";
 
 export default function AdminLead() {
   const [selectedLeads, setSelectedLeads] = useState([]);
@@ -72,6 +75,8 @@ export default function AdminLead() {
    console.log(x)
   };
 
+  // for downloading pdf
+
   useEffect(() => {
     getUser().then((res) => setEmployees(res.data.userData));
   }, [updateLead]);
@@ -92,70 +97,7 @@ export default function AdminLead() {
       }
     });
   }, []);
-  // const leads = [
-  //   {
-  //     id: 1,
-  //     name: "Sarah Johnson",
-  //     email: "sarah.j@example.com",
-  //     phone: "+1 (555) 123-4567",
-  //     company: "Tech Corp",
-  //     source: "Website",
-  //     status: "New",
-  //     assignedTo: "Unassigned",
-  //     date: "2024-01-15",
-  //     value: "$5,000",
-  //   },
-  //   {
-  //     id: 2,
-  //     name: "Michael Chen",
-  //     email: "michael.c@startup.io",
-  //     phone: "+1 (555) 234-5678",
-  //     company: "StartupIO",
-  //     source: "Meta",
-  //     status: "Contacted",
-  //     assignedTo: "John Smith",
-  //     date: "2024-01-14",
-  //     value: "$12,000",
-  //   },
-  //   {
-  //     id: 3,
-  //     name: "Emma Williams",
-  //     email: "emma.w@business.com",
-  //     phone: "+1 (555) 345-6789",
-  //     company: "Business Ltd",
-  //     source: "Google",
-  //     status: "Qualified",
-  //     assignedTo: "Jane Doe",
-  //     date: "2024-01-14",
-  //     value: "$8,500",
-  //   },
-  //   {
-  //     id: 4,
-  //     name: "David Brown",
-  //     email: "david.b@company.net",
-  //     phone: "+1 (555) 456-7890",
-  //     company: "Company Net",
-  //     source: "Website",
-  //     status: "New",
-  //     assignedTo: "Unassigned",
-  //     date: "2024-01-13",
-  //     value: "$3,200",
-  //   },
-  //   {
-  //     id: 5,
-  //     name: "Lisa Anderson",
-  //     email: "lisa.a@enterprise.com",
-  //     phone: "+1 (555) 567-8901",
-  //     company: "Enterprise Co",
-  //     source: "Meta",
-  //     status: "Proposal Sent",
-  //     assignedTo: "John Smith",
-  //     date: "2024-01-12",
-  //     value: "$25,000",
-  //   },
-  // ];
-
-  // const employees = ['Unassigned', 'John Smith', 'Jane Doe', 'Mike Wilson', 'Sarah Parker']
+  
   const statuses = [
     "New",
     "Contacted",
@@ -240,7 +182,7 @@ export default function AdminLead() {
           </p>
         </div>
         <div className="flex items-center gap-3">
-          <button className="flex items-center gap-2 rounded-lg border border-neutral-700 bg-neutral-800 px-4 py-2 text-sm font-medium text-white transition-colors hover:bg-neutral-700">
+          <button className="flex items-center gap-2 rounded-lg border border-neutral-700 bg-neutral-800 px-4 py-2 text-sm font-medium text-white transition-colors hover:bg-neutral-700" onClick={()=>downloadPDF(leads)}>
             <Download className="h-4 w-4" />
             Export
           </button>

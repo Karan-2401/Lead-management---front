@@ -7,7 +7,7 @@ export default function AdminDashboard() {
   // const totalLeads = 1247
   const [totalLeads,setTotalLeads] = useState('')
   // const todayLeads = 34
-  const [todayLeads,setTodayLeads] = useState([])
+  const [todayLeads,setTodayLeads] = useState(0)
   const leadGrowth = 12.5
   
   const leadsBySource = [
