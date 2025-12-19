@@ -17,6 +17,7 @@ import {
   SearchIcon,
   Edit,
   Trash2,
+  Loader,
   Eye,
 } from "lucide-react";
 import { addLead, getAllLeads, updatelead,deleteLead } from "../api/Lead";
@@ -30,6 +31,8 @@ export default function AdminLead() {
   const [newLeadform, setNewLeadForm] = useState(false);
   const [employees, setEmployees] = useState("");
   const [updateLead,serUpdateLead] = useState(false)
+
+    const [loader, setLoader] = useState(true);
   const [sortConfig, setSortConfig] = useState({
     key: "date",
     direction: "desc",
@@ -83,7 +86,10 @@ export default function AdminLead() {
 
   useEffect(() => {
     getAllLeads().then((res) => {
+      if(res.data.msg = 'Data'){
+        setLoader(false)
       setLeads(res.data.data);
+      }
     });
   }, []);
   // const leads = [
@@ -445,7 +451,19 @@ export default function AdminLead() {
               </tr>
             </thead>
             <tbody className="divide-y divide-neutral-800">
-              {
+              {loader ? 
+                              <tr
+                              className="text-2xl text-white p-2"
+                                style={{
+                                  display: "inline-block",
+                                  animation: "spin 2s linear infinite",
+                                }}
+                              ><td>
+              
+                                <Loader />
+                              </td>
+                              </tr>
+                            :
                 leads.map((lead) => {
                   const SourceIcon = getSourceIcon(lead.source);
                   return (
