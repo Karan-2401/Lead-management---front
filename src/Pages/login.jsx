@@ -14,6 +14,7 @@ const Login = () => {
   const handleSubmit = (e) => {
     e.preventDefault();
     setRunApi(!runApi);
+    setShowLoader(true)
   };
 
   useEffect(() => {
@@ -23,10 +24,11 @@ const Login = () => {
     if (email && password) {
       signIn({ email, password })
         .then((res) => {
+
           if (res.data.msg == "login successfull") {
             sessionStorage.setItem("user", JSON.stringify(res.data.data));
             window.location.reload();
-            setShowLoader(true)
+            setShowLoader(false)
             navigate("/dashboard");
           }
         })
