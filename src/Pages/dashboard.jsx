@@ -6,7 +6,7 @@ const Dashboard = () => {
   const Data = useContext(DataContext)
   return (
    <>
-   {Data.Data.profile.role == 'Admin' ? <AdminDashboard/> : <EmployeeDashboard/>}
+   {Data?.Data && Data.Data.profile.role == 'Admin' ? <AdminDashboard/> : <EmployeeDashboard/>}
    </>
   )
 }

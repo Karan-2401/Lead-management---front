@@ -7,7 +7,7 @@ export default function SettingsPage() {
   const [showAddUserModal, setShowAddUserModal] = useState(false)
   const [showPassword, setShowPassword] = useState({})
   const Data = useContext(DataContext)
-  const role = Data.Data.profile.role
+  const role = Data?.Data && Data.Data.profile.role
 
 
   const [apiKeys, setApiKeys] = useState({

@@ -1,6 +1,6 @@
 import React from "react"
 
-import { useState } from "react"
+import { useState,useEffect } from "react"
 import {
   Search,
   Filter,
@@ -17,7 +17,9 @@ import {
   Edit2,
   Save,
 } from "lucide-react"
-
+import { DataContext } from "../dataContext";
+import { useContext } from "react";
+import { getAllLeadEmp } from "../api/Lead";
 export default function EmployeeLeadsPage() {
   const [showFilters, setShowFilters] = useState(false)
   const [showLeadDetails, setShowLeadDetails] = useState(false)
@@ -25,6 +27,9 @@ export default function EmployeeLeadsPage() {
   const [newNote, setNewNote] = useState("")
   const [editingStatus, setEditingStatus] = useState(false)
   const [currentStatus, setCurrentStatus] = useState("")
+  const userData = useContext(DataContext).Data;
+  const [myLeads,setMyLeads] = useState([])
+
 
   // Filter states
   const [filters, setFilters] = useState({
@@ -35,119 +40,12 @@ export default function EmployeeLeadsPage() {
   })
 
   // Sample data - replace with your actual API data
-  const myLeads = [
-    {
-      id: 1,
-      name: "Sarah Johnson",
-      email: "sarah.j@example.com",
-      phone: "+1 (555) 123-4567",
-      company: "Tech Corp",
-      source: "Website",
-      status: "New",
-      priority: "High",
-      assignedDate: "2024-01-15",
-      lastContact: null,
-      value: "$5,000",
-      notes: [
-        {
-          id: 1,
-          author: "You",
-          date: "2024-01-15 10:30 AM",
-          text: "Initial lead received. Need to reach out within 24 hours.",
-        },
-      ],
-    },
-    {
-      id: 2,
-      name: "Michael Chen",
-      email: "michael.c@startup.io",
-      phone: "+1 (555) 234-5678",
-      company: "StartupIO",
-      source: "Meta",
-      status: "Contacted",
-      priority: "Medium",
-      assignedDate: "2024-01-14",
-      lastContact: "2024-01-14 3:45 PM",
-      value: "$12,000",
-      notes: [
-        {
-          id: 1,
-          author: "You",
-          date: "2024-01-14 3:45 PM",
-          text: "Had initial call. Interested in our premium package. Following up next week.",
-        },
-        { id: 2, author: "You", date: "2024-01-14 10:00 AM", text: "Left voicemail, waiting for callback." },
-      ],
-    },
-    {
-      id: 3,
-      name: "Emma Williams",
-      email: "emma.w@business.com",
-      phone: "+1 (555) 345-6789",
-      company: "Business Ltd",
-      source: "Google",
-      status: "Qualified",
-      priority: "High",
-      assignedDate: "2024-01-13",
-      lastContact: "2024-01-15 11:20 AM",
-      value: "$8,500",
-      notes: [
-        {
-          id: 1,
-          author: "You",
-          date: "2024-01-15 11:20 AM",
-          text: "Sent proposal via email. Budget approved. Waiting for final decision.",
-        },
-        {
-          id: 2,
-          author: "You",
-          date: "2024-01-13 2:00 PM",
-          text: "Great conversation. They need solution by end of month.",
-        },
-      ],
-    },
-    {
-      id: 4,
-      name: "David Brown",
-      email: "david.b@company.net",
-      phone: "+1 (555) 456-7890",
-      company: "Company Net",
-      source: "Website",
-      status: "New",
-      priority: "Low",
-      assignedDate: "2024-01-13",
-      lastContact: null,
-      value: "$3,200",
-      notes: [],
-    },
-    {
-      id: 5,
-      name: "Lisa Anderson",
-      email: "lisa.a@enterprise.com",
-      phone: "+1 (555) 567-8901",
-      company: "Enterprise Co",
-      source: "Meta",
-      status: "Proposal Sent",
-      priority: "High",
-      assignedDate: "2024-01-12",
-      lastContact: "2024-01-14 9:00 AM",
-      value: "$25,000",
-      notes: [
-        {
-          id: 1,
-          author: "You",
-          date: "2024-01-14 9:00 AM",
-          text: "Proposal sent. Scheduled follow-up call for Jan 20.",
-        },
-        {
-          id: 2,
-          author: "You",
-          date: "2024-01-12 4:30 PM",
-          text: "Initial discovery call completed. Great fit for our enterprise plan.",
-        },
-      ],
-    },
-  ]
+   useEffect(() => {
+      getAllLeadEmp(userData.phone).then((res) => {
+        setMyLeads(res.data.data);
+        // setLeadDetails({ ...leadDetails, assignL: res.data.data.length });
+      });
+    }, []);
 
   const statuses = ["New", "Contacted", "Qualified", "Proposal Sent", "Negotiation", "Won", "Lost"]
 
@@ -250,7 +148,7 @@ export default function EmployeeLeadsPage() {
           <p className="text-sm text-neutral-400">New Leads</p>
           <p className="mt-1 text-2xl font-bold text-blue-500">{myLeads.filter((l) => l.status === "New").length}</p>
         </div>
-        <div className="rounded-lg border border-neutral-800 bg-neutral-900 p-4">
+        {/* <div className="rounded-lg border border-neutral-800 bg-neutral-900 p-4">
           <p className="text-sm text-neutral-400">In Progress</p>
           <p className="mt-1 text-2xl font-bold text-amber-500">
             {
@@ -262,7 +160,7 @@ export default function EmployeeLeadsPage() {
         <div className="rounded-lg border border-neutral-800 bg-neutral-900 p-4">
           <p className="text-sm text-neutral-400">High Priority</p>
           <p className="mt-1 text-2xl font-bold text-red-500">{myLeads.filter((l) => l.priority === "High").length}</p>
-        </div>
+        </div> */}
       </div>
 
       {/* Search and Filters Bar */}
@@ -319,7 +217,7 @@ export default function EmployeeLeadsPage() {
                 ))}
               </select>
             </div>
-            <div>
+            {/* <div>
               <label className="mb-2 block text-xs font-medium text-neutral-400">Priority</label>
               <select
                 value={filters.priority}
@@ -331,7 +229,7 @@ export default function EmployeeLeadsPage() {
                 <option value="medium">Medium</option>
                 <option value="low">Low</option>
               </select>
-            </div>
+            </div> */}
           </div>
         </div>
       )}
@@ -354,9 +252,9 @@ export default function EmployeeLeadsPage() {
                 <th className="p-4 text-left text-xs font-semibold uppercase tracking-wider text-neutral-400">
                   Status
                 </th>
-                <th className="p-4 text-left text-xs font-semibold uppercase tracking-wider text-neutral-400">
+                {/* <th className="p-4 text-left text-xs font-semibold uppercase tracking-wider text-neutral-400">
                   Priority
-                </th>
+                </th> */}
                 <th className="p-4 text-left text-xs font-semibold uppercase tracking-wider text-neutral-400">
                   Last Contact
                 </th>
@@ -410,7 +308,7 @@ export default function EmployeeLeadsPage() {
                         {lead.status}
                       </span>
                     </td>
-                    <td className="p-4">
+                    {/* <td className="p-4">
                       <span
                         className={`inline-flex items-center gap-1 text-sm font-medium ${
                           lead.priority === "High"
@@ -422,7 +320,7 @@ export default function EmployeeLeadsPage() {
                       >
                         {lead.priority}
                       </span>
-                    </td>
+                    </td> */}
                     <td className="p-4">
                       {lead.lastContact ? (
                         <div className="flex items-center gap-2 text-sm text-neutral-300">
@@ -502,7 +400,7 @@ export default function EmployeeLeadsPage() {
                       <Calendar className="h-4 w-4 text-neutral-400" />
                       <div>
                         <p className="text-xs text-neutral-400">Assigned Date</p>
-                        <p className="text-sm text-white">{selectedLead.assignedDate}</p>
+                        <p className="text-sm text-white">{new Date(selectedLead.updatedAt).toLocaleDateString()}</p>
                       </div>
                     </div>
                   </div>
@@ -535,7 +433,7 @@ export default function EmployeeLeadsPage() {
                   </div>
 
                   {/* Notes List */}
-                  <div className="space-y-3">
+                  {/* <div className="space-y-3">
                     {selectedLead.notes.length > 0 ? (
                       selectedLead.notes.map((note) => (
                         <div key={note.id} className="rounded-lg border border-neutral-800 bg-neutral-800/50 p-4">
@@ -552,7 +450,7 @@ export default function EmployeeLeadsPage() {
                         <p className="mt-2 text-sm text-neutral-400">No notes yet. Add your first note above.</p>
                       </div>
                     )}
-                  </div>
+                  </div> */}
                 </div>
               </div>
 

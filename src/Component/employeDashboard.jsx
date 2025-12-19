@@ -13,6 +13,7 @@ import {
   SearchIcon,
   Eye,
   Edit,
+  Loader,
   AlertCircle,
 } from "lucide-react";
 import { getAllLeadEmp, updateleademp } from "../api/Lead";
@@ -26,6 +27,7 @@ export default function EmployeeDashboard() {
   const [leadDetails, setLeadDetails] = useState({ assignL: "", contact: "" });
   const [assignedLeads, setAssignedLeads] = useState([]);
   const [updateLead, setUpdateLead] = useState(false)
+  const [loader, setLoader]= useState(true)
   // Sample data - replace with your actual API data for the logged-in employee
   const update = () => {
     updateleademp(selectedLead).then((res)=>{if(res.data.msg == 'lead is updated'){
@@ -34,8 +36,12 @@ export default function EmployeeDashboard() {
   };
   useEffect(() => {
     getAllLeadEmp(userData.phone).then((res) => {
+      if(res.data.msg == 'all employees lead'){
       setAssignedLeads(res.data.data);
       setLeadDetails({ ...leadDetails, assignL: res.data.data.length });
+      setLoader(false)
+      }
+
     });
   }, [updateLead]);
 
@@ -215,8 +221,11 @@ export default function EmployeeDashboard() {
             </div>
 
             {/* Leads List */}
-            <div className="divide-y divide-neutral-800">
-              {assignedLeads.map((lead) => {
+            <div className="divide-y divide-neutral-800 p-2 text-2xl text-white">
+              {loader ?  (<div  style={{
+          display: 'inline-block',
+          animation: 'spin 2s linear infinite',
+        }}><Loader /></div>) : assignedLeads.map((lead) => {
                 const SourceIcon = getSourceIcon(lead.source);
                 return (
                   <div

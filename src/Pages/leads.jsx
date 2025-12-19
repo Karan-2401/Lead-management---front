@@ -6,7 +6,7 @@ const LeadsPage = () => {
   const Data = useContext(DataContext)
   return (
     <>
-     {Data.Data.profile.role == 'Admin' ? <AdminLead/> : <EmployeeLeadsPage/>}
+     {Data?.Data && Data.Data.profile.role == 'Admin' ? <AdminLead/> : <EmployeeLeadsPage/>}
     </>
   )
 }

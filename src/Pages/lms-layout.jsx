@@ -9,9 +9,20 @@ export default function LmsLayout() {
   const navigate = useNavigate()
   const Data = useContext(DataContext)
   function removeFromLocalStorage(key) {
-  localStorage.removeItem(key);
+  sessionStorage.removeItem(key);
 }
-  const role = Data ? Data.Data.profile.role : ''
+   useEffect(() => {
+    if (!Data?.Data || Data.Data === '') {
+      navigate('/');
+    }
+  }, [Data, navigate]); 
+  // const role = Data?.Data?.profile?.role ? Data.Data.profile.role : 'thieve';
+  const role = (Data?.Data && typeof Data.Data === 'object' && Data.Data.profile && Data.Data.profile.role)
+    ? Data.Data.profile.role 
+    : 'thieve';
+
+  
+
       const navItems = [
     { name: 'Dashboard', path: '/dashboard', icon: LayoutDashboard, for:['Admin','Employee']},
     { name: 'Leads', path: '/dashboard/lead', icon: Users, for:['Admin','Employee'] },
@@ -19,11 +30,7 @@ export default function LmsLayout() {
     { name: 'Setting', path: '/dashboard/setting', icon: Settings, for:['Admin','Employee'] },
     { name: 'User Management', path: '/dashboard/usermanagement', icon: UserCog, for:['Admin'] },
   ]
-  useEffect(()=>{
-    if(!localStorage.getItem('user')){
-      return navigate('/')
-    }
-  })
+
 
   const isActive = (path) => {
     return location.pathname === path

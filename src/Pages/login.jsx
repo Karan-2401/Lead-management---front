@@ -1,4 +1,5 @@
 import React, { useEffect } from "react";
+import { Loader } from "lucide-react";
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { signIn } from "../api/User";
@@ -7,6 +8,7 @@ const Login = () => {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [runApi, setRunApi] = useState(false);
+  const [showLoader,setShowLoader] = useState(false)
   const navigate = useNavigate();
 
   const handleSubmit = (e) => {
@@ -15,15 +17,16 @@ const Login = () => {
   };
 
   useEffect(() => {
-    if (localStorage.getItem("user")) {
+    if (sessionStorage.getItem("user")) {
       return navigate("/dashboard");
     }
     if (email && password) {
       signIn({ email, password })
         .then((res) => {
           if (res.data.msg == "login successfull") {
-            localStorage.setItem("user", JSON.stringify(res.data.data));
+            sessionStorage.setItem("user", JSON.stringify(res.data.data));
             window.location.reload();
+            setShowLoader(true)
             navigate("/dashboard");
           }
         })
@@ -86,9 +89,13 @@ const Login = () => {
           <button
             type="submit"
             className="w-full bg-blue-600 text-white py-3 rounded-lg font-semibold 
-                       hover:bg-blue-700 transition-all"
+                       hover:bg-blue-700 transition-all flex justify-center"
           >
-            Login
+            {showLoader ? (<div  style={{
+          display: 'inline-block',
+          animation: 'spin 2s linear infinite',
+        }}><Loader /></div>) : 'Login'}
+            
           </button>
         </form>
       </div>
