@@ -4,7 +4,9 @@ import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { signIn } from "../api/User";
 import logo from '../../public/logo.png'
+import NotificationComponent from "../Component/notificationComponent";
 const Login = () => {
+  console.log('renderinc login')
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [runApi, setRunApi] = useState(false);
@@ -16,31 +18,44 @@ const Login = () => {
     setRunApi(!runApi);
     setShowLoader(true)
   };
-
+  const [message,setMessage] = useState(false)
+  const [data,setData] = useState({
+    Heading:'Demo',
+    Code:'000',
+    Text:'text demo'
+  })
   useEffect(() => {
     if (sessionStorage.getItem("user")) {
       return navigate("/dashboard");
     }
     if (email && password) {
       signIn({ email, password })
-        .then((res) => {
-
-          if (res.data.msg == "login successfull") {
-            sessionStorage.setItem("user", JSON.stringify(res.data.data));
+        .then((response) => {
+          setShowLoader(false)
+          setMessage(true)
+          setData({...data,Heading:response.data.statusText,Code:response.data.statusCode,Text:response.data.msg})
+          if(response.data.msg == "login successfull") {
+            sessionStorage.setItem("user", JSON.stringify(response.data.data));
             window.location.reload();
             setShowLoader(false)
             navigate("/dashboard");
           }
         })
         .catch((err) => {
-          console.log(err);
+          setShowLoader(false)
+          console.log(err)
+         if(err){
+           setMessage(true)
+          const {response} = err
+          setData({...data,Heading:response.statusText,Code:response.data.statusCode,Text:response.data.msg}) 
+         }
         });
     }
-    console.log("run");
   }, [runApi]);
 
   return (
     <div className="min-h-screen flex items-center justify-center bg-[#0a0a0a] p-4">
+     {message ? <NotificationComponent data={data} action={setMessage}/> : ''} 
       <div className="w-full max-w-md bg-white shadow-xl rounded-xl p-8">
         {/* Title */}
         <img src={logo} alt="" className="w-full" style={{height:'200px'}} />
