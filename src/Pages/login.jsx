@@ -33,7 +33,8 @@ const Login = () => {
         .then((response) => {
           setShowLoader(false)
           setMessage(true)
-          setData({...data,Heading:response.data.statusText,Code:response.data.statusCode,Text:response.data.msg})
+          console.log(response)
+          setData({...data,Heading:response.data.Heading,Code:response.data.statusCode,Text:response.data.msg})
           if(response.data.msg == "login successfull") {
             sessionStorage.setItem("user", JSON.stringify(response.data.data));
             window.location.reload();
@@ -47,7 +48,7 @@ const Login = () => {
          if(err){
            setMessage(true)
           const {response} = err
-          setData({...data,Heading:response.statusText,Code:response.data.statusCode,Text:response.data.msg}) 
+          setData({...data,Heading:response.data.Heading,Code:response.data.statusCode,Text:response.data.msg}) 
          }
         });
     }

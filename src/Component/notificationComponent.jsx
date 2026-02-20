@@ -54,7 +54,7 @@ const NotificationComponent = React.memo(({ data, action }) => {
           onClick={() => action(false)}
         />
         <h4 className={`text-md font-semibold `} style={{ color: mainColor }}>
-          {Heading} {Code}
+          {Heading}
         </h4>
         <p className="text-400 text-sm">{Text}</p>
       </div>
