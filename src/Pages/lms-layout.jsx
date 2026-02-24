@@ -81,17 +81,19 @@ export default function LmsLayout() {
           {/* Header Icons */}
           <div className="flex items-center gap-4">
             {/* Tool Icon */}
-            <button className="rounded-lg p-2 text-neutral-400 transition-colors hover:bg-neutral-800 hover:text-white">
+            <Link to='/dashboard/setting'> <button className="rounded-lg p-2 text-neutral-400 transition-colors hover:bg-neutral-800 hover:text-white cursor-pointer">
               <Wrench className="h-5 w-5" />
             </button>
+            </Link>
+           
 
             {/* Profile Icon */}
-            <button className="rounded-lg p-2 text-neutral-400 transition-colors hover:bg-neutral-800 hover:text-white">
+            <button className="rounded-lg p-2 text-neutral-400 transition-colors hover:bg-neutral-800 hover:text-white cursor-pointer">
               <User className="h-5 w-5" />
             </button>
 
             {/* Logout Icon */}
-            <button className="rounded-lg p-2 text-neutral-400 transition-colors hover:bg-neutral-800 hover:text-red-400" onClick={()=>{
+            <button className="rounded-lg p-2 text-neutral-400 transition-colors hover:bg-neutral-800 hover:text-red-400 cursor-pointer" onClick={()=>{
               removeFromLocalStorage('user')
               navigate('/')
             }}>
