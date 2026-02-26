@@ -20,22 +20,22 @@ import {
   Loader,
   Eye,
 } from "lucide-react";
-import { addLead, getAllLeads, updatelead,deleteLead } from "../api/Lead";
+import { addLead, getAllLeads, updatelead, deleteLead } from "../api/Lead";
 import { getUser } from "../api/User";
-import { jsPDF } from 'jspdf';
-import 'jspdf-autotable'; 
+import { jsPDF } from "jspdf";
+import "jspdf-autotable";
 import { downloadPDF } from "../function/pdfCreate";
 
-export default function AdminLead() {
+export default function AdminLead({ data }) {
   const [selectedLeads, setSelectedLeads] = useState([]);
   const [showFilters, setShowFilters] = useState(false);
   const [showLeadDetails, setShowLeadDetails] = useState(false);
   const [selectedLead, setSelectedLead] = useState(null);
   const [newLeadform, setNewLeadForm] = useState(false);
   const [employees, setEmployees] = useState("");
-  const [updateLead,serUpdateLead] = useState(false)
+  const [updateLead, serUpdateLead] = useState(false);
 
-    const [loader, setLoader] = useState(true);
+  const [loader, setLoader] = useState(true);
   const [sortConfig, setSortConfig] = useState({
     key: "date",
     direction: "desc",
@@ -65,14 +65,14 @@ export default function AdminLead() {
     setNewLeadForm(false); // Close the form after submission
   };
 
-   const updateHandleSubmit = () => {
+  const updateHandleSubmit = () => {
     updatelead(formData).then((res) => console.log(res));
     setNewLeadForm(false); // Close the form after submission
   };
 
   const deletelead = (x) => {
     deleteLead(x).then((res) => console.log(res));
-   console.log(x)
+    console.log(x);
   };
 
   // for downloading pdf
@@ -88,16 +88,15 @@ export default function AdminLead() {
     dateFrom: "",
     dateTo: "",
   });
-
   useEffect(() => {
-    getAllLeads().then((res) => {
-      if(res.data.msg = 'Data'){
-        setLoader(false)
-      setLeads(res.data.data);
+    getAllLeads(data.Data.company_id).then((res) => {
+      if ((res.data.msg = "Data")) {
+        setLoader(false);
+        setLeads(res.data.data);
       }
     });
   }, []);
-  
+
   const statuses = [
     "New",
     "Contacted",
@@ -182,7 +181,10 @@ export default function AdminLead() {
           </p>
         </div>
         <div className="flex items-center gap-3">
-          <button className="flex items-center gap-2 rounded-lg border border-neutral-700 bg-neutral-800 px-4 py-2 text-sm font-medium text-white transition-colors hover:bg-neutral-700" onClick={()=>downloadPDF(leads)}>
+          <button
+            className="flex items-center gap-2 rounded-lg border border-neutral-700 bg-neutral-800 px-4 py-2 text-sm font-medium text-white transition-colors hover:bg-neutral-700"
+            onClick={() => downloadPDF(leads)}
+          >
             <Download className="h-4 w-4" />
             Export
           </button>
@@ -393,19 +395,19 @@ export default function AdminLead() {
               </tr>
             </thead>
             <tbody className="divide-y divide-neutral-800">
-              {loader ? 
-                              <tr
-                              className="text-2xl text-white p-2"
-                                style={{
-                                  display: "inline-block",
-                                  animation: "spin 2s linear infinite",
-                                }}
-                              ><td>
-              
-                                <Loader />
-                              </td>
-                              </tr>
-                            :
+              {loader ? (
+                <tr
+                  className="text-2xl text-white p-2"
+                  style={{
+                    display: "inline-block",
+                    animation: "spin 2s linear infinite",
+                  }}
+                >
+                  <td>
+                    <Loader />
+                  </td>
+                </tr>
+              ) : (
                 leads.map((lead) => {
                   const SourceIcon = getSourceIcon(lead.source);
                   return (
@@ -455,7 +457,7 @@ export default function AdminLead() {
                       <td className="p-4">
                         <span
                           className={`inline-flex rounded-full px-3 py-1 text-xs font-medium ${getStatusColor(
-                            lead.status
+                            lead.status,
                           )}`}
                         >
                           {lead.status}
@@ -481,15 +483,15 @@ export default function AdminLead() {
                             onClick={() => {
                               setNewLeadForm(true);
                               setFormData({
-                                fullName:lead.name,
-                                company:lead.company,
+                                fullName: lead.name,
+                                company: lead.company,
                                 email: lead.email,
                                 phone: lead.phone,
                                 source: lead.source,
                                 status: lead.status,
                                 assignTo: lead.assigned_to,
                                 leadValue: lead.value,
-                                update:true
+                                update: true,
                               });
                             }}
                           >
@@ -498,7 +500,7 @@ export default function AdminLead() {
                           <button
                             className="rounded p-1 text-neutral-400 transition-colors hover:bg-neutral-700 hover:text-red-400"
                             title="Delete"
-                            onClick={()=>deletelead(lead.phone)}
+                            onClick={() => deletelead(lead.phone)}
                           >
                             <Trash2 className="h-4 w-4" />
                           </button>
@@ -509,7 +511,8 @@ export default function AdminLead() {
                       </td>
                     </tr>
                   );
-                })}
+                })
+              )}
             </tbody>
           </table>
         </div>
@@ -549,8 +552,10 @@ export default function AdminLead() {
             <div className="flex items-center justify-between border-b border-neutral-800 p-6">
               <h2 className="text-xl font-bold text-white">Add Lead</h2>
               <button
-                onClick={() => {setNewLeadForm(false)
-                   setFormData({})}}
+                onClick={() => {
+                  setNewLeadForm(false);
+                  setFormData({});
+                }}
                 className="rounded-lg p-2 text-neutral-400 transition-colors hover:bg-neutral-800 hover:text-white"
               >
                 <X className="h-5 w-5" />
@@ -689,25 +694,29 @@ export default function AdminLead() {
             {/* Modal Footer */}
             <div className="flex items-center justify-end gap-3 border-t border-neutral-800 p-6">
               <button
-                onClick={() => {setNewLeadForm(false)
-                  setFormData({})
+                onClick={() => {
+                  setNewLeadForm(false);
+                  setFormData({});
                 }}
                 className="rounded-lg border border-neutral-700 bg-neutral-800 px-4 py-2 text-sm font-medium text-white transition-colors hover:bg-neutral-700"
               >
                 Cancel
               </button>
-              {formData.update ? ( <button
-                onClick={updateHandleSubmit}
-                className="rounded-lg bg-blue-500 px-4 py-2 text-sm font-medium text-white transition-colors hover:bg-blue-600"
-              >
-                Update
-              </button>): ( <button
-                onClick={handleSubmit}
-                className="rounded-lg bg-blue-500 px-4 py-2 text-sm font-medium text-white transition-colors hover:bg-blue-600"
-              >
-                Add
-              </button>)}
-             
+              {formData.update ? (
+                <button
+                  onClick={updateHandleSubmit}
+                  className="rounded-lg bg-blue-500 px-4 py-2 text-sm font-medium text-white transition-colors hover:bg-blue-600"
+                >
+                  Update
+                </button>
+              ) : (
+                <button
+                  onClick={handleSubmit}
+                  className="rounded-lg bg-blue-500 px-4 py-2 text-sm font-medium text-white transition-colors hover:bg-blue-600"
+                >
+                  Add
+                </button>
+              )}
             </div>
           </div>
         </div>

@@ -42,7 +42,8 @@ export default function LmsLayout() {
       <aside className="w-64 border-r border-neutral-800 bg-neutral-900">
         {/* Logo/Brand */}
         <div className="flex h-16 items-center border-b border-neutral-800 px-6">
-          <h2 className="text-xl font-bold text-white">LeadTracker</h2>
+          {Data?.Data?.company?.image ? (<img src={`${import.meta.env.VITE_UrlBack}/uploads/${Data?.Data?.company?.image}`} alt={Data?.Data?.company?.image} className='w-12/12 h-full p-2 rounded-2xl'/>) : (<h2 className="text-xl font-bold text-white">{Data?.Data?.company ? Data?.Data?.company?.name: 'LeadTracker'}</h2>)}
+          
         </div>
 
         {/* Navigation */}

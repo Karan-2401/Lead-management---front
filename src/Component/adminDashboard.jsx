@@ -2,7 +2,7 @@ import React, { useEffect, useState } from 'react'
 import { TrendingUp, TrendingDown, Users, Globe, Facebook, Search } from 'lucide-react'
 import { getAllLeads } from '../api/Lead'
 
-export default function AdminDashboard() {
+export default function AdminDashboard({data}) {
   // Sample data - replace with your actual data
   // const totalLeads = 1247
   const [totalLeads,setTotalLeads] = useState('')
@@ -16,7 +16,7 @@ export default function AdminDashboard() {
     { source: 'Google', count: 312, percentage: 25, color: 'bg-emerald-500', icon: Search },
   ]
   useEffect(()=>{
-    getAllLeads().then((res)=>{
+    getAllLeads(data.Data.company_id).then((res)=>{
       const data = res.data.data;
       setTotalLeads(data)
     })
