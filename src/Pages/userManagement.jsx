@@ -1,5 +1,5 @@
 import React, { useEffect } from "react";
-import { useState } from "react";
+import { useState, useContext } from "react";
 import {
   Search,
   UserPlus,
@@ -14,12 +14,16 @@ import {
   XCircle,
   AlertCircle,
 } from "lucide-react";
+import NotificationComponent from "../Component/notificationComponent";
 import { createUser, deleteUser, getUser, updateUser } from "../api/User";
-
+import { DataContext } from "../dataContext";
 export default function UserManagementPage() {
+  const Data = useContext(DataContext);
   const [showAddUserModal, setShowAddUserModal] = useState(false);
   const [showEditUserModal, setShowEditUserModal] = useState(false);
   const [showPermissionsModal, setShowPermissionsModal] = useState(false);
+  const [notification, setNotification] = useState(false);
+  const [notificationData, setNotificationData] = useState("");
   const [selectedUser, setSelectedUser] = useState({
     name: "",
     email: "",
@@ -31,7 +35,7 @@ export default function UserManagementPage() {
   const [statusFilter, setStatusFilter] = useState("all");
   const [callApi, setCallApi] = useState(false);
   const [users, setUsers] = useState([]);
-  const [emergency, setEmergency] = useState(false)
+  const [emergency, setEmergency] = useState(false);
   const [newUser, setNewUser] = useState({
     name: "",
     email: "",
@@ -39,7 +43,6 @@ export default function UserManagementPage() {
     role: "",
     password: "",
   });
-
   const handleChange = (e) => {
     setSelectedUser({ ...selectedUser, [e.target.name]: e.target.value });
   };
@@ -74,10 +77,18 @@ export default function UserManagementPage() {
   };
 
   useEffect(() => {
-    const { name, email, phone, role, password } = newUser;
-    if (name && email && phone && role && password) {
+    newUser.company_id = Data.Data.company_id;
+    const { name, email, phone, role, password, company_id } = newUser;
+    if (name && email && phone && role && password && company_id) {
       createUser(newUser).then((res) => {
+        const {Heading,msg,statusCode } = res.data;
         if (res.data.msg == "user is created") {
+          setNotificationData({
+            Heading:Heading,
+            Text:msg,
+            Code:statusCode,
+          });
+          setNotification(true) 
           setShowAddUserModal(false);
           setCallApi(!callApi);
         }
@@ -87,10 +98,10 @@ export default function UserManagementPage() {
   }, [callApi]);
 
   useEffect(() => {
-    getUser()
+    getUser(Data.Data.company_id)
       .then((res) => setUsers(res.data.userData))
       .catch((err) => console.log(err));
-  }, [callApi,emergency]);
+  }, [callApi, emergency]);
 
   const roles = ["Admin", "Employee"];
   const statuses = [
@@ -168,7 +179,7 @@ export default function UserManagementPage() {
   const handleDeleteUser = (userId) => {
     deleteUser(userId).then((res) => {
       if (res.data.msg == "User deleted successfully") {
-          setEmergency(!emergency)
+        setEmergency(!emergency);
       }
     });
   };
@@ -187,6 +198,11 @@ export default function UserManagementPage() {
 
   return (
     <div className="h-full relative">
+      {notification ? (
+        <NotificationComponent data={notificationData} action={setNotification} />
+      ) : (
+        ""
+      )}
       {/* Page Header */}
       <div className="mb-6 flex items-center justify-between">
         <div>
@@ -346,7 +362,7 @@ export default function UserManagementPage() {
                   <td className="p-4">
                     <span
                       className={`inline-flex rounded-full px-3 py-1 text-xs font-medium ${getRoleColor(
-                        user.profiles.role
+                        user.profiles.role,
                       )}`}
                     >
                       {user.profiles.role}
@@ -355,7 +371,7 @@ export default function UserManagementPage() {
                   <td className="p-4">
                     <span
                       className={`inline-flex items-center gap-1.5 rounded-full px-3 py-1 text-xs font-medium ${getStatusColor(
-                        user.profiles.status
+                        user.profiles.status,
                       )}`}
                     >
                       {user.profiles.status === true ? (
@@ -690,7 +706,7 @@ export default function UserManagementPage() {
                     <div className="mb-4">
                       <span
                         className={`inline-flex rounded-full px-3 py-1 text-sm font-semibold ${getRoleColor(
-                          role
+                          role,
                         )}`}
                       >
                         {role}

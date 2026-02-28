@@ -78,7 +78,7 @@ export default function AdminLead({ data }) {
   // for downloading pdf
 
   useEffect(() => {
-    getUser().then((res) => setEmployees(res.data.userData));
+    getUser(data.Data.company_id).then((res) => setEmployees(res.data.userData));
   }, [updateLead]);
   // Filter states
   const [filters, setFilters] = useState({

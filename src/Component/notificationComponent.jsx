@@ -12,8 +12,8 @@ import {
   InfoIcon,
 } from "lucide-react";
 const NotificationComponent = React.memo(({ data, action }) => {
-  console.log("renderinc notification");
   const { Heading, Code, Text } = data;
+  console.log(data)
   const [mainColor, setMainColor] = useState("");
   const xxxx = useCallback(() => {
     console.log("running");
