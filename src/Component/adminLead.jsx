@@ -403,7 +403,7 @@ export default function AdminLead({ data }) {
                     animation: "spin 2s linear infinite",
                   }}
                 >
-                  <td>
+                  <td className="">
                     <Loader />
                   </td>
                 </tr>

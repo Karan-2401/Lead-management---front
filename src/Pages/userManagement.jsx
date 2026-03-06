@@ -13,6 +13,7 @@ import {
   CheckCircle,
   XCircle,
   AlertCircle,
+  Loader
 } from "lucide-react";
 import NotificationComponent from "../Component/notificationComponent";
 import { createUser, deleteUser, getUser, updateUser } from "../api/User";
@@ -24,6 +25,7 @@ export default function UserManagementPage() {
   const [showPermissionsModal, setShowPermissionsModal] = useState(false);
   const [notification, setNotification] = useState(false);
   const [notificationData, setNotificationData] = useState("");
+  const [loader, setLoader] = useState(true);
   const [selectedUser, setSelectedUser] = useState({
     name: "",
     email: "",
@@ -99,7 +101,10 @@ export default function UserManagementPage() {
 
   useEffect(() => {
     getUser(Data.Data.company_id)
-      .then((res) => setUsers(res.data.userData))
+      .then((res) => {
+        setUsers(res.data.userData)
+        setLoader(false);
+      })
       .catch((err) => console.log(err));
   }, [callApi, emergency]);
 
@@ -326,7 +331,20 @@ export default function UserManagementPage() {
               </tr>
             </thead>
             <tbody className="divide-y divide-neutral-800">
-              {filteredUsers.map((user) => (
+               {loader ? (
+                      <tr
+                        className="text-2xl text-white p-2"
+                        style={{
+                          display: "inline-block",
+                          animation: "spin 2s linear infinite",
+                        }}
+                      >
+                        <td className="">
+                          <Loader />
+                        </td>
+                      </tr>
+                    ) : (
+                      filteredUsers.map((user) => (
                 <tr
                   key={user._id}
                   className="transition-colors hover:bg-neutral-800/50"
@@ -421,7 +439,8 @@ export default function UserManagementPage() {
                     </div>
                   </td>
                 </tr>
-              ))}
+              ))
+                    )}
             </tbody>
           </table>
         </div>
