@@ -13,10 +13,8 @@ import {
 } from "lucide-react";
 const NotificationComponent = React.memo(({ data, action }) => {
   const { Heading, Code, Text } = data;
-  console.log(data)
   const [mainColor, setMainColor] = useState("");
   const xxxx = useCallback(() => {
-    console.log("running");
     if (Code >= 400 && Code <= 500) {
       setMainColor("#FF0000"); // Red
     } else if (Code >= 100 && Code < 200) {
@@ -36,7 +34,6 @@ const NotificationComponent = React.memo(({ data, action }) => {
     xxxx();
     setTimeout(() => action(false), 2000);
   }, [Code]);
-  console.log(mainColor);
 
   return (
     <div

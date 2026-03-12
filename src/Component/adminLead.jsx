@@ -1,5 +1,5 @@
 import React, { useEffect } from "react";
-import { useState } from "react";
+import { useState, useContext } from "react";
 import {
   Search,
   Filter,
@@ -22,11 +22,14 @@ import {
 } from "lucide-react";
 import { addLead, getAllLeads, updatelead, deleteLead } from "../api/Lead";
 import { getUser } from "../api/User";
+import { DataContext } from "../dataContext";
 import { jsPDF } from "jspdf";
 import "jspdf-autotable";
 import { downloadPDF } from "../function/pdfCreate";
+import NotificationComponent from "./notificationComponent";
 
 export default function AdminLead({ data }) {
+  const Data = useContext(DataContext);
   const [selectedLeads, setSelectedLeads] = useState([]);
   const [showFilters, setShowFilters] = useState(false);
   const [showLeadDetails, setShowLeadDetails] = useState(false);
@@ -34,8 +37,9 @@ export default function AdminLead({ data }) {
   const [newLeadform, setNewLeadForm] = useState(false);
   const [employees, setEmployees] = useState("");
   const [updateLead, serUpdateLead] = useState(false);
-
   const [loader, setLoader] = useState(true);
+  const [notification, setNotification] = useState(false);
+  const [notificationData, setNotificationData] = useState("");
   const [sortConfig, setSortConfig] = useState({
     key: "date",
     direction: "desc",
@@ -49,6 +53,7 @@ export default function AdminLead({ data }) {
     status: "",
     assignTo: "",
     leadValue: "",
+    company_id: Data.Data.company_id,
   });
   const [leads, setLeads] = useState([]);
 
@@ -61,7 +66,18 @@ export default function AdminLead({ data }) {
   };
 
   const handleSubmit = () => {
-    addLead(formData).then((res) => console.log(res));
+    addLead(formData).then((res) => {
+      const { Heading, msg, statusCode } = res.data;
+      if (msg == "Lead is created") {
+        setNotificationData({
+          Heading: Heading,
+          Text: msg,
+          Code: statusCode,
+        })
+        all_Lead();
+      }
+      setNotification(true);
+    });
     setNewLeadForm(false); // Close the form after submission
   };
 
@@ -71,14 +87,38 @@ export default function AdminLead({ data }) {
   };
 
   const deletelead = (x) => {
-    deleteLead(x).then((res) => console.log(res));
-    console.log(x);
+    deleteLead(x).then((res) => {
+      const { Heading, msg, statusCode } = res.data;
+      if (msg == "lead is removed") {
+        setNotificationData({
+          Heading: Heading,
+          Text: msg,
+          Code: statusCode,
+        })
+        all_Lead();
+      }
+      setNotification(true);
+    });
   };
+
+  const all_Lead = () => {
+    getAllLeads(data.Data.company_id).then((res) => {
+      if ((res.data.msg = "Data")) {
+        setLoader(false);
+        setLeads(res.data.data);
+      }
+    });
+  };
+  useEffect(() => {
+    all_Lead();
+  }, []);
 
   // for downloading pdf
 
   useEffect(() => {
-    getUser(data.Data.company_id).then((res) => setEmployees(res.data.userData));
+    getUser(data.Data.company_id).then((res) =>
+      setEmployees(res.data.userData),
+    );
   }, [updateLead]);
   // Filter states
   const [filters, setFilters] = useState({
@@ -88,14 +128,6 @@ export default function AdminLead({ data }) {
     dateFrom: "",
     dateTo: "",
   });
-  useEffect(() => {
-    getAllLeads(data.Data.company_id).then((res) => {
-      if ((res.data.msg = "Data")) {
-        setLoader(false);
-        setLeads(res.data.data);
-      }
-    });
-  }, []);
 
   const statuses = [
     "New",
@@ -173,6 +205,14 @@ export default function AdminLead({ data }) {
   return (
     <div className="h-full">
       {/* Page Header */}
+      {notification ? (
+        <NotificationComponent
+          data={notificationData}
+          action={setNotification}
+        />
+      ) : (
+        ""
+      )}
       <div className="mb-6 flex items-center justify-between">
         <div>
           <h1 className="text-2xl font-bold text-white">Leads Management</h1>

@@ -1,21 +1,26 @@
-import React from "react";
+import React, { useContext, useEffect } from "react";
 import { Save } from "lucide-react";
 import { useState } from "react";
 import { updateCompany } from "../api/Company";
 import { Input } from "./inputComponent";
 import { Media } from "./inputComponent";
+import { DataContext } from "../dataContext";
+import { getCompany } from "../api/Company";
 
 export default function CompanySettings() {
+  const Data = useContext(DataContext)
+  const {address,city,email,name,phone,state,website,zipcode,_id} = Data.Data.company
   const [companySettings, setCompanySettings] = useState({
-    companyName: "",
-    email: "",
-    phone: "",
-    website: "",
-    address: "",
-    city: "",
-    state: "",
-    zipCode: "",
+    companyName: name,
+    email: email,
+    phone: phone,
+    website: website,
+    address: address,
+    city: city,
+    state: state,
+    zipCode: zipcode,
   });
+  
   const [image, setImage] = useState(null);
   const handleChange = (field) => (e) => {
     setCompanySettings((prev) => ({
