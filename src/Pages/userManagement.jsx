@@ -51,7 +51,14 @@ export default function UserManagementPage() {
 
   const editUser = () => {
     updateUser({ ...selectedUser }).then((res) => {
+      const {Heading,msg,statusCode } = res.data;
       if (res.data.msg == "User is Update") {
+        setNotificationData({
+            Heading:Heading,
+            Text:msg,
+            Code:statusCode,
+          });
+          setNotification(true) 
         setCallApi(!callApi);
         setShowEditUserModal(false);
       }
@@ -184,6 +191,13 @@ export default function UserManagementPage() {
   const handleDeleteUser = (userId) => {
     deleteUser(userId).then((res) => {
       if (res.data.msg == "User deleted successfully") {
+        const {Heading,msg,statusCode } = res.data;
+        setNotificationData({
+            Heading:Heading,
+            Text:msg,
+            Code:statusCode,
+          });
+          setNotification(true) 
         setEmergency(!emergency);
       }
     });

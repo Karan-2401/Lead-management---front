@@ -82,7 +82,18 @@ export default function AdminLead({ data }) {
   };
 
   const updateHandleSubmit = () => {
-    updatelead(formData).then((res) => console.log(res));
+    updatelead(formData).then((res) => {
+      const { Heading, msg, statusCode } = res.data;
+      if (msg == "lead is updated") {
+        setNotificationData({
+          Heading: Heading,
+          Text: msg,
+          Code: statusCode,
+        })
+        all_Lead();}
+      setNotification(true);
+
+    });
     setNewLeadForm(false); // Close the form after submission
   };
 
