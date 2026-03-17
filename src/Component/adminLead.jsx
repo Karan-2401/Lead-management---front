@@ -93,7 +93,7 @@ export default function AdminLead({ data }) {
         all_Lead();}
       setNotification(true);
 
-    });
+    }).catch((error)=>{console.log(error)});
     setNewLeadForm(false); // Close the form after submission
   };
 

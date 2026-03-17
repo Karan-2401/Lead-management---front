@@ -1,14 +1,17 @@
-import React from 'react'
-import { useState } from 'react'
-const ProfilePasswordComponent = () => {
+import React from "react";
+import { useState } from "react";
+import { updateProfilePassword } from "../api/User";
+import NotificationComponent from "./notificationComponent";
+const ProfilePasswordComponent = ({ data }) => {
   const [formData, setFormData] = useState({
     oldPassword: "",
     newPassword: "",
     confirmPassword: "",
   });
-
+  const { phone } = data.Data;
   const [error, setError] = useState("");
-
+  const [notification, setNotification] = useState(false);
+  const [notificationData, setNotificationData] = useState("");
   // handle input change
   const handleChange = (e) => {
     const { name, value } = e.target;
@@ -40,11 +43,25 @@ const ProfilePasswordComponent = () => {
     setError("");
 
     console.log("Password Change Data:", formData);
-
-    // API call here
-    // axios.post('/api/change-password', formData)
-
-    alert("Password updated successfully!");
+    updateProfilePassword(phone, formData)
+      .then((res) => {
+        const { Heading, msg, statusCode } = res.data;
+        setNotificationData({
+          Heading: Heading,
+          Text: msg,
+          Code: statusCode,
+        });
+        setNotification(true);
+      })
+      .catch((error) => {
+         const { Heading, msg, statusCode } = error.response.data;
+        setNotificationData({
+          Heading: Heading,
+          Text: msg,
+          Code: statusCode,
+        });
+        setNotification(true);
+      });
 
     // reset form
     setFormData({
@@ -56,8 +73,15 @@ const ProfilePasswordComponent = () => {
 
   return (
     <div className="w-full flex items-center justify-center p-4">
+      {notification ? (
+        <NotificationComponent
+          data={notificationData}
+          action={setNotification}
+        />
+      ) : (
+        ""
+      )}
       <div className="w-full max-w-2xl rounded-lg border border-neutral-800 bg-neutral-900 shadow-2xl">
-        
         {/* Header */}
         <div className="border-b border-neutral-800 p-6">
           <h2 className="text-xl font-bold text-white">Change Password</h2>
@@ -66,7 +90,6 @@ const ProfilePasswordComponent = () => {
         {/* Content */}
         <div className="p-6">
           <div className="grid gap-6 md:grid-cols-2">
-
             <div className="md:col-span-2">
               <label className="mb-2 block text-xs font-medium text-neutral-400">
                 Current Password
@@ -108,18 +131,14 @@ const ProfilePasswordComponent = () => {
                 className="w-full rounded-lg border border-neutral-700 bg-neutral-800 px-3 py-2 text-sm text-white focus:border-blue-500 focus:outline-none"
               />
             </div>
-
           </div>
 
           {/* Error */}
-          {error && (
-            <p className="mt-4 text-sm text-red-500">{error}</p>
-          )}
+          {error && <p className="mt-4 text-sm text-red-500">{error}</p>}
         </div>
 
         {/* Footer */}
         <div className="flex justify-end gap-3 border-t border-neutral-800 p-6">
-          
           <button
             onClick={() =>
               setFormData({
@@ -139,11 +158,10 @@ const ProfilePasswordComponent = () => {
           >
             Update Password
           </button>
-
         </div>
       </div>
     </div>
   );
-}
+};
 
-export default ProfilePasswordComponent
+export default ProfilePasswordComponent;
