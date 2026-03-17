@@ -18,7 +18,7 @@ import ApiSettings from "../Component/apiSettings";
 import NotificationSettings from "../Component/notificationSettings";
 import CompanySettings from "../Component/companySettings";
 export default function SettingsPage() {
-  const [activeTab, setActiveTab] = useState("users");
+  const [activeTab, setActiveTab] = useState("notifications");
   const [showAddUserModal, setShowAddUserModal] = useState(false);
   const [showPassword, setShowPassword] = useState({});
   const Data = useContext(DataContext);
@@ -40,13 +40,13 @@ export default function SettingsPage() {
   });
 
   const tabs = [
-    { id: "api", label: "API Settings", icon: Key, for: ["Admin"] },
     {
       id: "notifications",
       label: "Notifications",
       icon: Bell,
       for: ["Admin", "Employee"],
     },
+    { id: "api", label: "API Settings", icon: Key, for: ["Admin"] },
     {
       id: "company",
       label: "Company Settings",

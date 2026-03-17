@@ -7,6 +7,7 @@ import LeadsPage from "./Pages/leads";
 import AnalyticsPage from "./Pages/analytics";
 import SettingsPage from "./Pages/setting";
 import UserManagementPage from "./Pages/userManagement";
+import Profile from "./Pages/profile";
 import { useNavigate } from "react-router-dom";
 import { DataProvider } from "./dataContext";
 
@@ -23,6 +24,10 @@ const App = () => {
           <Route
             path="/dashboard/usermanagement"
             element={<UserManagementPage />}
+          />
+          <Route
+            path="/dashboard/profile"
+            element={<Profile />}
           />
         </Route>
       </Routes>

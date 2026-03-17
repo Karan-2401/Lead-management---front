@@ -1,6 +1,6 @@
 import React, { useEffect } from 'react'
 import { Outlet, Link, useLocation, useNavigate } from 'react-router-dom'
-import { LayoutDashboard, Users, BarChart3, Settings, UserCog, Wrench, LogOut, User } from 'lucide-react'
+import { LayoutDashboard, Users, BarChart3, Settings, UserCog, Wrench, LogOut, User,UserPen } from 'lucide-react'
 import { DataContext } from '../dataContext'
 import { useContext } from 'react'
 
@@ -29,6 +29,7 @@ export default function LmsLayout() {
     // { name: 'Analytics', path: '/dashboard/analytics', icon: BarChart3, for:['Admin'] },
     { name: 'Setting', path: '/dashboard/setting', icon: Settings, for:['Admin','Employee'] },
     { name: 'User Management', path: '/dashboard/usermanagement', icon: UserCog, for:['Admin'] },
+    {name:'Profile',path:'/dashboard/profile',icon:UserPen,for:['Admin','Employee']}
   ]
 
 
@@ -89,9 +90,11 @@ export default function LmsLayout() {
            
 
             {/* Profile Icon */}
+            <Link to='/dashboard/profile'>
             <button className="rounded-lg p-2 text-neutral-400 transition-colors hover:bg-neutral-800 hover:text-white cursor-pointer">
               <User className="h-5 w-5" />
             </button>
+             </Link>
 
             {/* Logout Icon */}
             <button className="rounded-lg p-2 text-neutral-400 transition-colors hover:bg-neutral-800 hover:text-red-400 cursor-pointer" onClick={()=>{
