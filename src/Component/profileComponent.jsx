@@ -28,7 +28,7 @@ const ProfileComponent = ({ data }) => {
           Text: msg,
           Code: statusCode,
         })}
-      setNotification(true);});
+      setNotification(true);}).catch((error)=>{console.log(error)});
   };
 
   // reset form

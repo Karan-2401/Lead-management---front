@@ -5,11 +5,14 @@ import { updateCompany } from "../api/Company";
 import { Input } from "./inputComponent";
 import { Media } from "./inputComponent";
 import { DataContext } from "../dataContext";
-import { getCompany } from "../api/Company";
+import NotificationComponent from "./notificationComponent";
 
 export default function CompanySettings() {
-  const Data = useContext(DataContext)
-  const {address,city,email,name,phone,state,website,zipcode,_id} = Data.Data.company
+  const Data = useContext(DataContext);
+  const [notification, setNotification] = useState(false);
+  const [notificationData, setNotificationData] = useState("");
+  const { address, city, email, name, phone, state, website, zipcode, _id } =
+    Data.Data.company;
   const [companySettings, setCompanySettings] = useState({
     companyName: name,
     email: email,
@@ -20,7 +23,7 @@ export default function CompanySettings() {
     state: state,
     zipCode: zipcode,
   });
-  
+
   const [image, setImage] = useState(null);
   const handleChange = (field) => (e) => {
     setCompanySettings((prev) => ({
@@ -34,15 +37,41 @@ export default function CompanySettings() {
   const onSave = (e) => {
     e.preventDefault();
     const data = new FormData();
+
     Object.keys(companySettings).forEach((key) => {
       data.append(key, companySettings[key]);
     });
     data.append("image", image);
-    updateCompany(data).then((response)=>console.log(res)).catch((err)=>console.log(err))
+    for (let pair of data.entries()) {
+      console.log(pair[0], pair[1]);
+    }
+    updateCompany(_id, data)
+      .then((response) => {
+          const { Heading, msg, statusCode } = response.data;
+        if (msg == "company's information is save") {
+          setNotificationData({
+            Heading: Heading,
+            Text: msg,
+            Code: statusCode,
+          });
+        }
+        setNotification(true);
+      })
+      .catch((error) => {
+        console.log(error)
+      });
   };
   return (
     <div>
       <div className="mb-6">
+        {notification ? (
+        <NotificationComponent
+          data={notificationData}
+          action={setNotification}
+        />
+      ) : (
+        ""
+      )}
         <h2 className="text-lg font-semibold text-white">Company Settings</h2>
         <p className="mt-1 text-sm text-neutral-400">
           Update your company information

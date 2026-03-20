@@ -10,6 +10,7 @@ import UserManagementPage from "./Pages/userManagement";
 import Profile from "./Pages/profile";
 import { useNavigate } from "react-router-dom";
 import { DataProvider } from "./dataContext";
+import CompanyManagement from "./Pages/companyManagement";
 
 const App = () => {
   return (
@@ -28,6 +29,10 @@ const App = () => {
           <Route
             path="/dashboard/profile"
             element={<Profile />}
+          />
+          <Route
+            path="/dashboard/companymanagement"
+            element={<CompanyManagement />}
           />
         </Route>
       </Routes>

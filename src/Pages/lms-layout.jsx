@@ -1,10 +1,10 @@
 import React, { useEffect } from 'react'
 import { Outlet, Link, useLocation, useNavigate } from 'react-router-dom'
-import { LayoutDashboard, Users, BarChart3, Settings, UserCog, Wrench, LogOut, User,UserPen } from 'lucide-react'
+import { LayoutDashboard, Users, BarChart3, Settings, UserCog, Wrench, LogOut, User,UserPen, Building2 } from 'lucide-react'
 import { DataContext } from '../dataContext'
 import { useContext } from 'react'
 
-export default function LmsLayout() {
+export function LmsLayout() {
   const location = useLocation()
   const navigate = useNavigate()
   const Data = useContext(DataContext)
@@ -29,6 +29,7 @@ export default function LmsLayout() {
     // { name: 'Analytics', path: '/dashboard/analytics', icon: BarChart3, for:['Admin'] },
     { name: 'Setting', path: '/dashboard/setting', icon: Settings, for:['Admin','Employee'] },
     { name: 'User Management', path: '/dashboard/usermanagement', icon: UserCog, for:['Admin'] },
+    { name: 'Company Management', path: '/dashboard/companymanagement', icon: Building2, for:['Admin'] },
     {name:'Profile',path:'/dashboard/profile',icon:UserPen,for:['Admin','Employee']}
   ]
 
@@ -115,3 +116,5 @@ export default function LmsLayout() {
     </div>
   )
 }
+
+export default LmsLayout
