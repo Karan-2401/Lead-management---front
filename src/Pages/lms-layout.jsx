@@ -24,13 +24,13 @@ export function LmsLayout() {
   
 
       const navItems = [
-    { name: 'Dashboard', path: '/dashboard', icon: LayoutDashboard, for:['Admin','Employee']},
-    { name: 'Leads', path: '/dashboard/lead', icon: Users, for:['Admin','Employee'] },
+    { name: 'Dashboard', path: '/dashboard', icon: LayoutDashboard, for:['Admin','Employee','SuperAdmin']},
+    { name: 'Leads', path: '/dashboard/lead', icon: Users, for:['Admin','Employee','SuperAdmin'] },
     // { name: 'Analytics', path: '/dashboard/analytics', icon: BarChart3, for:['Admin'] },
-    { name: 'Setting', path: '/dashboard/setting', icon: Settings, for:['Admin','Employee'] },
-    { name: 'User Management', path: '/dashboard/usermanagement', icon: UserCog, for:['Admin'] },
-    { name: 'Company Management', path: '/dashboard/companymanagement', icon: Building2, for:['Admin'] },
-    {name:'Profile',path:'/dashboard/profile',icon:UserPen,for:['Admin','Employee']}
+    { name: 'Setting', path: '/dashboard/setting', icon: Settings, for:['Admin','Employee','SuperAdmin'] },
+    { name: 'User Management', path: '/dashboard/usermanagement', icon: UserCog, for:['Admin','SuperAdmin'] },
+    { name: 'Company Management', path: '/dashboard/companymanagement', icon: Building2, for:['SuperAdmin'] },
+    {name:'Profile',path:'/dashboard/profile',icon:UserPen,for:['Admin','Employee','SuperAdmin']}
   ]
 
 
